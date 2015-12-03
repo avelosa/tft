@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>tft</title>
+		<title>TFT</title>
 		<link rel="stylesheet" type="text/css"
 		href="https://fonts.googleapis.com/css?family=Oxygen:400,300,700"/>
 		<link rel="stylesheet" type="text/css" href="/static/css/main.css">
@@ -12,16 +12,24 @@
 				T<span id="f">F</span>T
 				<div class="sub">Temporary File Transfer</div>
 			</div>
+
 			<div class="content">
 				<h1>Instantly share files.</h1>
 				<div>
 					<p>Hello <b>{{.}}</b></p>
-					<p>Upload a file: <input type="file" id="input"></p>
+					<!-- <p>Upload a file: <input type="file" id="input"></p> -->
+
+					<form enctype="multipart/form-data" action="http://127.0.0.1:3000/" method="post">
+			      Choose a file: <input type="file" name="uploadfile" />
+			      <input type="hidden" name="token" value="{{.}}"/>
+			      <input type="submit" value="Upload" />
+					</form>
+
 				</div>
 				<!--div>
 					<input id="post-shortlink"
 					value="https://somerandom.url/qmE_jpnYQS">
-				</div-->	
+				</div-->
 			</div>
 		</div>
 	</body>

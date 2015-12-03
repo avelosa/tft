@@ -16,7 +16,13 @@
 				<h1>Instantly share files.</h1>
 				<div>
 					<p>Hello <b>{{.}}</b></p>
-					<p>Upload a file: <input type="file" id="input"></p>
+					<p>Upload a file: 
+						<form enctype="multipart/form-data" action="http://127.0.0.1:3000/upload" method="post">
+      						<input type="file" name="uploadfile" />
+      						<input type="hidden" name="token" value="{{.}}"/>
+      						<input type="submit" value="upload" />
+						</form>
+					</p>
 				</div>
 				<!--div>
 					<input id="post-shortlink"

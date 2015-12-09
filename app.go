@@ -4,16 +4,13 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"os/user"
 	"os"
 	"io"
-	//"crypto/md5"
+	"math/rand"
+	"time"
 
 	"github.com/gorilla/mux"
 )
-
-// Load in the templates we need
-var templates = template.Must(template.ParseFiles("templates/home.html"))
 
 func main() {
 	r := mux.NewRouter()
@@ -33,16 +30,48 @@ func main() {
  * Loads the home page where the user is greeted and can upload a file
  *****************************************************************************/
 func home(w http.ResponseWriter, r *http.Request) {
-	// Get the user
-	u, err := user.Current()
-	if err != nil {
-		fmt.Println(err)
-	}
+	// Load the templates
+	t,_ := template.ParseFiles("templates/header.html", "templates/home.html",
+		 "templates/footer.html")
 
-	// Load up the home template
-	err = templates.ExecuteTemplate(w, "home.html", u.Name)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if r.Method == "GET" {
+		t.ExecuteTemplate(w, "home.html", nil)
+	} else if r.Method == "POST" { // Pressed upload
+		r.ParseMultipartForm(5000000)
+
+		// Load the uploaded file
+		upload,_,err := r.FormFile("uploadfile")
+		if err != nil {
+			fmt.Println(err)
+			t.ExecuteTemplate(w, "home.html", "Error uploading the file")
+			return
+		}
+		defer upload.Close()
+
+		// Generate a random filename/url
+		randString := RandomString(100)
+		fmt.Println("random string =", randString)
+
+		// Create the temp file
+		temp, err := os.OpenFile("./temp/" +randString, os.O_WRONLY | os.O_CREATE | os.O_EXCL, 0666)
+		if err != nil {
+			fmt.Println(err)
+			t.ExecuteTemplate(w, "home.html", "Error uploading the file")
+			return
+		}
+		defer temp.Close()
+
+		// Copy the uploaded file to the temp file
+		_,err = io.Copy(temp, upload)
+		if err != nil {
+			fmt.Println(err)
+			t.ExecuteTemplate(w, "home.html", "Error uploading the file")
+			return
+		}
+		upload.Close()
+		temp.Close()
+
+
 	}
 }
 
@@ -50,28 +79,20 @@ func home(w http.ResponseWriter, r *http.Request) {
  * Loads the home page where the user is greeted and can upload a file
  *****************************************************************************/
 func upload(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "POST" {
-			r.ParseMultipartForm(5242880)
 
-			// Load the uploaded file
-			file, handler, err := r.FormFile("uploadfile")
-			if err != nil {
-					fmt.Println(err)
-					return
-			}
-			defer file.Close()
+}
 
-			// Create the temp file
-			f, err := os.OpenFile("./temp/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
-			if err != nil {
-					fmt.Println(err)
-					return
-			}
-			defer f.Close()
 
-			// Copy the uploaded file to the temp file
-			io.Copy(f, file)
-		} else {
-			// Regular get method, should we redirect to home?
-		}
+const possibleChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
+/******************************************************************************
+ * Generates a random string of length n only consisting of the above chars
+ *****************************************************************************/
+func RandomString(n int) string {
+		rand.Seed(time.Now().UnixNano())
+    b := make([]byte, n)
+		numPos := len(possibleChars)
+    for i := range b {
+        b[i] = possibleChars[rand.Intn(numPos)]
+    }
+    return string(b)
 }

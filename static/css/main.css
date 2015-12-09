@@ -14,7 +14,7 @@ html {
   overflow-y: scroll;
 }
 body {
-  line-height: 1.4;	
+  line-height: 1.4;
 }
 .cf:before,
 .cf:after {
@@ -47,11 +47,14 @@ body {
   border-bottom: 1px solid #f0f0f0;
 }
 .content {
-	
+
 }
 .content h1 {
   text-align: center;
   color: #d6d6d6;
+}
+#error {
+  color: #ff0000;
 }
 #container {
   width: 100%;
@@ -63,4 +66,3 @@ body {
   margin: 20px auto 0;
   position: relative;
 }
-  

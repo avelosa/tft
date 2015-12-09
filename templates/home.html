@@ -1,33 +1,17 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>TFT</title>
-		<link rel="stylesheet" type="text/css"
-		href="https://fonts.googleapis.com/css?family=Oxygen:400,300,700"/>
-		<link rel="stylesheet" type="text/css" href="/static/css/main.css">
-	</head>
-	<body class="cf">
-		<div id="container">
-			<div class="header">
-				T<span id="f">F</span>T
-				<div class="sub">Temporary File Transfer</div>
-			</div>
+{{template "header"}}
 
-			<div class="content">
-				<h1>Instantly share files.</h1>
-				<div>
-					<p>Hello <b>{{.}}</b></p>
-					<form enctype="multipart/form-data" action="http://127.0.0.1:3000/upload" method="post">
-			      Choose a file: <input type="file" name="uploadfile" />
-			      <input type="hidden" name="token" value="{{.}}"/>
-			      <input type="submit" value="Upload" />
-					</form>
-				</div>
-				<!--div>
-					<input id="post-shortlink"
-					value="https://somerandom.url/qmE_jpnYQS">
-				</div-->
-			</div>
+<div id="container">
+	<div class="content">
+		<h1>Instantly share files.</h1>
+		<div>
+			<span id="error">{{.}}</span> <!-- used to print errors -->
+			<form enctype="multipart/form-data" action="http://127.0.0.1:3000/" method="post">
+	      Choose a file: <input type="file" name="uploadfile" />
+	      <input type="hidden" name="token" value="{{.}}"/>
+	      <input type="submit" value="Upload" />
+			</form>
 		</div>
-	</body>
-</html>
+	</div>
+</div>
+
+{{template "footer"}}

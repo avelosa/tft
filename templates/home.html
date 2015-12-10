@@ -4,12 +4,13 @@
 	<div class="content">
 		<h1>Instantly share files.</h1>
 		<div>
-			<span id="error">{{.}}</span> <!-- used to print errors -->
+			<span id="error">{{.Err}}</span> <!-- used to print errors -->
 			<form enctype="multipart/form-data" action="http://127.0.0.1:3000/" method="post">
 	      Choose a file: <input type="file" name="uploadfile" />
 	      <input type="hidden" name="token" value="{{.}}"/>
 	      <input type="submit" value="Upload" />
 			</form>
+			{{.Success}}
 		</div>
 	</div>
 </div>

@@ -34,6 +34,11 @@ func main() {
 	http.ListenAndServe(":3000", r)
 }
 
+type HomeTemplateData struct {
+	Err string
+	Success string
+}
+
 /******************************************************************************
  * Loads the home page where the user is greeted and can upload a file
  *****************************************************************************/
@@ -43,7 +48,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		"templates/footer.html")
 
 	if r.Method == "GET" {
-		t.ExecuteTemplate(w, "home.html", nil)
+		t.ExecuteTemplate(w, "home.html", HomeTemplateData{"", ""})
 	} else if r.Method == "POST" { // Pressed upload
 		r.ParseMultipartForm(5000000)
 
@@ -51,7 +56,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		archive, err, name := RandomArchiveFile(100)
 		if err != nil {
 			fmt.Println(err)
-			t.ExecuteTemplate(w, "home.html", "Error uploading the file")
+			t.ExecuteTemplate(w, "home.html", HomeTemplateData{"Error uploading the file", ""})
 			return
 		}
 		defer archive.Close()
@@ -61,7 +66,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		upload, handler, err := r.FormFile("uploadfile")
 		if err != nil {
 			fmt.Println(err)
-			t.ExecuteTemplate(w, "home.html", "Error uploading the file")
+			t.ExecuteTemplate(w, "home.html", HomeTemplateData{"Error uploading the file", ""})
 			return
 		}
 		defer upload.Close()
@@ -70,14 +75,14 @@ func home(w http.ResponseWriter, r *http.Request) {
 		f, err := archive.Create(handler.Filename)
 		if err != nil {
 			fmt.Println(err)
-			t.ExecuteTemplate(w, "home.html", "Error uploading the file")
+			t.ExecuteTemplate(w, "home.html", HomeTemplateData{"Error uploading the file", ""})
 			return
 		}
 		// Copy the data into the file
 		_, err = io.Copy(f, upload)
 		if err != nil {
 			fmt.Println(err)
-			t.ExecuteTemplate(w, "home.html", "Error uploading the file")
+			t.ExecuteTemplate(w, "home.html", HomeTemplateData{"Error uploading the file", ""})
 			return
 		}
 		upload.Close()
@@ -86,7 +91,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		archive.Close()
 
 		// Inform user of success and temp url
-		t.ExecuteTemplate(w, "home.html", hostname+"/upload/"+name)
+		t.ExecuteTemplate(w, "home.html", HomeTemplateData{"", hostname +"/upload/" +name})
 	}
 }
 

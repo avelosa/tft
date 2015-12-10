@@ -15,6 +15,11 @@ import (
 
 var hostname = "http://localhost:3000"
 
+func init() {
+	// Seed random
+	rand.Seed(time.Now().UnixNano())
+}
+
 func main() {
 	r := mux.NewRouter()
 
@@ -113,9 +118,6 @@ const validFileChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123
  * Generates a random archive file in the temp/ folder
  *****************************************************************************/
 func RandomArchiveFile(n int) (*zip.Writer, error, string) {
-		// Seed random
-		rand.Seed(time.Now().UnixNano())
-
     b := make([]byte, n)
 		numPos := len(validFileChars)
 

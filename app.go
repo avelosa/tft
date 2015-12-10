@@ -8,9 +8,12 @@ import (
 	"io"
 	"math/rand"
 	"time"
+	"archive/zip"
 
 	"github.com/gorilla/mux"
 )
+
+var hostname = "http://localhost:3000"
 
 func main() {
 	r := mux.NewRouter()
@@ -21,7 +24,7 @@ func main() {
 	))
 
 	r.HandleFunc("/", home)
-	r.HandleFunc("/upload", upload)
+	r.HandleFunc("/upload/{file}", upload)
 
 	http.ListenAndServe(":3000", r)
 }
@@ -39,8 +42,18 @@ func home(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == "POST" { // Pressed upload
 		r.ParseMultipartForm(5000000)
 
+		// Generate a random archive file
+		archive, err, name := RandomArchiveFile(100)
+		if err != nil {
+			fmt.Println(err)
+			t.ExecuteTemplate(w, "home.html", "Error uploading the file")
+			return
+		}
+		defer archive.Close()
+
+		// TODO: support uploading of multiple files at once into the archive?
 		// Load the uploaded file
-		upload,_,err := r.FormFile("uploadfile")
+		upload, handler,err := r.FormFile("uploadfile")
 		if err != nil {
 			fmt.Println(err)
 			t.ExecuteTemplate(w, "home.html", "Error uploading the file")
@@ -48,51 +61,77 @@ func home(w http.ResponseWriter, r *http.Request) {
 		}
 		defer upload.Close()
 
-		// Generate a random filename/url
-		randString := RandomString(100)
-		fmt.Println("random string =", randString)
-
-		// Create the temp file
-		temp, err := os.OpenFile("./temp/" +randString, os.O_WRONLY | os.O_CREATE | os.O_EXCL, 0666)
+		// Make the file in the archive
+		f, err := archive.Create(handler.Filename)
 		if err != nil {
 			fmt.Println(err)
 			t.ExecuteTemplate(w, "home.html", "Error uploading the file")
 			return
 		}
-		defer temp.Close()
-
-		// Copy the uploaded file to the temp file
-		_,err = io.Copy(temp, upload)
+		// Copy the data into the file
+		_, err = io.Copy(f, upload)
 		if err != nil {
 			fmt.Println(err)
 			t.ExecuteTemplate(w, "home.html", "Error uploading the file")
 			return
 		}
 		upload.Close()
-		temp.Close()
 
+		// Close archive
+		archive.Close()
 
+		// Inform user of success and temp url
+		t.ExecuteTemplate(w, "home.html", hostname +"/upload/" +name)
 	}
 }
 
 /******************************************************************************
- * Loads the home page where the user is greeted and can upload a file
+ * Used to access an uploaded file
  *****************************************************************************/
 func upload(w http.ResponseWriter, r *http.Request) {
+	// Get the variable filename
+	filename := "./temp/" + mux.Vars(r)["file"] + ".zip"
 
+	// See if the file exists
+	file, err := os.Open(filename)
+	if err != nil {
+		fmt.Println(err)
+		io.WriteString(w, "No files being hosted at this url")
+		return
+	}
+	file.Close()
+
+	// Download file
+	w.Header().Set("Content-Type", "applicaiton/zip")
+	w.Header().Set("Content-Disposition", "attachment; filename=temp.zip")
+	http.ServeFile(w, r, filename)
 }
 
 
-const possibleChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
+const validFileChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
 /******************************************************************************
- * Generates a random string of length n only consisting of the above chars
+ * Generates a random archive file in the temp/ folder
  *****************************************************************************/
-func RandomString(n int) string {
+func RandomArchiveFile(n int) (*zip.Writer, error, string) {
+		// Seed random
 		rand.Seed(time.Now().UnixNano())
+
     b := make([]byte, n)
-		numPos := len(possibleChars)
+		numPos := len(validFileChars)
+
+		// Generate random bytes
     for i := range b {
-        b[i] = possibleChars[rand.Intn(numPos)]
+        b[i] = validFileChars[rand.Intn(numPos)]
     }
-    return string(b)
+		// Convert bytes to string
+    name := string(b)
+
+		// Attempt to open the file
+		file, err := os.OpenFile("./temp/" + name + ".zip", os.O_CREATE | os.O_EXCL | os.O_WRONLY, 0666)
+		if err != nil {
+			return nil, err, ""
+		}
+
+		// Return archived file
+		return zip.NewWriter(file), nil, name
 }

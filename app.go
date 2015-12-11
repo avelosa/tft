@@ -30,13 +30,18 @@ func main() {
 
 	r.HandleFunc("/", home)
 	r.HandleFunc("/upload/{file}", upload)
+	r.HandleFunc("/download/{file}", download)
 
 	http.ListenAndServe(":3000", r)
 }
 
 type HomeTemplateData struct {
-	Err string
+	Err     string
 	Success string
+}
+
+type DownloadTemplateData struct {
+	Filename string
 }
 
 /******************************************************************************
@@ -91,7 +96,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		archive.Close()
 
 		// Inform user of success and temp url
-		t.ExecuteTemplate(w, "home.html", HomeTemplateData{"", hostname +"/upload/" +name})
+		t.ExecuteTemplate(w, "home.html", HomeTemplateData{"", hostname + "/download/" + name})
 	}
 }
 
@@ -112,9 +117,21 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	file.Close()
 
 	// Download file
-	w.Header().Set("Content-Type", "applicaiton/zip")
+	w.Header().Set("Content-Type", "application/zip")
 	w.Header().Set("Content-Disposition", "attachment; filename=temp.zip")
 	http.ServeFile(w, r, filename)
+}
+
+func download(w http.ResponseWriter, r *http.Request) {
+	// Load the templates
+	t, _ := template.ParseFiles("templates/header.html", "templates/download.html",
+		"templates/footer.html")
+
+	// Get the variable filename
+	filename := "./temp/" + mux.Vars(r)["file"] + ".zip"
+
+	// Inform user of success and temp url
+	t.ExecuteTemplate(w, "download.html", DownloadTemplateData{hostname + "/download/" + filename})
 }
 
 const validFileChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"

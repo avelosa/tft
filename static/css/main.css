@@ -39,6 +39,13 @@ header h4 {
   padding-top: 10px;
   word-spacing: 0.5em;
 }
+footer {
+  width: 100%;
+  text-align: center;
+  padding: 15px 0;
+  font: 1em Oxygen;
+  color: #1F2740;
+}
 .cf:before,
 .cf:after {
   content: ' ';
@@ -67,7 +74,7 @@ header h4 {
 }
 .blue {
   background-color:#84A4BF;
-  min-height: 350px;
+  min-height: 300px;
 }
 #wrapper {
   min-width: 100%;

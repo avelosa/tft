@@ -8,13 +8,16 @@
 	</div>
 	<div class="blue">
 		<div class="container">
-			<span id="error">{{.Err}}</span> <!-- used to print errors -->
 			<form enctype="multipart/form-data" action="http://127.0.0.1:3000/" method="post">
 	      	Choose a file: <input id="pick" type="file" name="uploadfile" />
 	      	<input type="hidden" name="token" value="{{.}}"/>
 	      	<input id="upload" type="submit" value="Upload" />
 			</form>
-			{{.Success}}
+			{{if .Success}}
+				<a href="{{.Info}}">{{.Info}}</a>
+			{{else}}
+			  <span id="error">{{.Info}}</span> <!-- used to print errors -->
+			{{end}}
 		</div>
 	</div>
 	</div>

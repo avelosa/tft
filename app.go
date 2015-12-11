@@ -36,14 +36,9 @@ func main() {
 }
 
 type HomeTemplateData struct {
-	Err     string
-	Success string
+	Success bool
+	Info string
 }
-
-type DownloadTemplateData struct {
-	Filename string
-}
-
 /******************************************************************************
  * Loads the home page where the user is greeted and can upload a file
  *****************************************************************************/
@@ -53,7 +48,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		"templates/footer.html")
 
 	if r.Method == "GET" {
-		t.ExecuteTemplate(w, "home.html", HomeTemplateData{"", ""})
+		t.ExecuteTemplate(w, "home.html", HomeTemplateData{false, ""})
 	} else if r.Method == "POST" { // Pressed upload
 		r.ParseMultipartForm(5000000)
 
@@ -61,7 +56,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		archive, err, name := RandomArchiveFile(100)
 		if err != nil {
 			fmt.Println(err)
-			t.ExecuteTemplate(w, "home.html", HomeTemplateData{"Error uploading the file", ""})
+			t.ExecuteTemplate(w, "home.html", HomeTemplateData{false, "Error uploading the file"})
 			return
 		}
 		defer archive.Close()
@@ -71,7 +66,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		upload, handler, err := r.FormFile("uploadfile")
 		if err != nil {
 			fmt.Println(err)
-			t.ExecuteTemplate(w, "home.html", HomeTemplateData{"Error uploading the file", ""})
+			t.ExecuteTemplate(w, "home.html", HomeTemplateData{false, "Error uploading the file"})
 			return
 		}
 		defer upload.Close()
@@ -80,14 +75,14 @@ func home(w http.ResponseWriter, r *http.Request) {
 		f, err := archive.Create(handler.Filename)
 		if err != nil {
 			fmt.Println(err)
-			t.ExecuteTemplate(w, "home.html", HomeTemplateData{"Error uploading the file", ""})
+			t.ExecuteTemplate(w, "home.html", HomeTemplateData{false, "Error uploading the file"})
 			return
 		}
 		// Copy the data into the file
 		_, err = io.Copy(f, upload)
 		if err != nil {
 			fmt.Println(err)
-			t.ExecuteTemplate(w, "home.html", HomeTemplateData{"Error uploading the file", ""})
+			t.ExecuteTemplate(w, "home.html", HomeTemplateData{false, "Error uploading the file"})
 			return
 		}
 		upload.Close()
@@ -96,12 +91,37 @@ func home(w http.ResponseWriter, r *http.Request) {
 		archive.Close()
 
 		// Inform user of success and temp url
-		t.ExecuteTemplate(w, "home.html", HomeTemplateData{"", hostname + "/download/" + name})
+		t.ExecuteTemplate(w, "home.html", HomeTemplateData{true, hostname + "/download/" + name})
 	}
 }
 
+type DownloadTemplateData struct {
+	Success bool
+	Info string
+}
 /******************************************************************************
  * Used to access an uploaded file
+ *****************************************************************************/
+func download(w http.ResponseWriter, r *http.Request) {
+	// Load the templates
+	t, _ := template.ParseFiles("templates/header.html", "templates/download.html",
+		"templates/footer.html")
+
+	// See if the file exists
+	filename := "./temp/" + mux.Vars(r)["file"] + ".zip"
+	file, err := os.Open(filename)
+	if err != nil {
+		t.ExecuteTemplate(w, "download.html", DownloadTemplateData{false, "No file being hosted at this url"})
+		return
+	}
+	file.Close()
+
+	// Inform user of success and temp url
+	t.ExecuteTemplate(w, "download.html", DownloadTemplateData{true, hostname + "/upload/" + mux.Vars(r)["file"]})
+}
+
+/******************************************************************************
+ * Downloads an upload to the browser
  *****************************************************************************/
 func upload(w http.ResponseWriter, r *http.Request) {
 	// Get the variable filename
@@ -110,8 +130,6 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	// See if the file exists
 	file, err := os.Open(filename)
 	if err != nil {
-		fmt.Println(err)
-		io.WriteString(w, "No files being hosted at this url")
 		return
 	}
 	file.Close()
@@ -122,20 +140,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, filename)
 }
 
-func download(w http.ResponseWriter, r *http.Request) {
-	// Load the templates
-	t, _ := template.ParseFiles("templates/header.html", "templates/download.html",
-		"templates/footer.html")
-
-	// Get the variable filename
-	filename := "./temp/" + mux.Vars(r)["file"] + ".zip"
-
-	// Inform user of success and temp url
-	t.ExecuteTemplate(w, "download.html", DownloadTemplateData{hostname + "/download/" + filename})
-}
-
 const validFileChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
-
 /******************************************************************************
  * Generates a random archive file in the temp/ folder
  *****************************************************************************/

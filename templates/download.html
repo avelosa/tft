@@ -2,13 +2,15 @@
 
 <div class="content">
 	<div id="container">
-		<div>
-			{{if .Success}}
-				<button><a href="{{.Info}}">Download File</a></button>
-			{{else}}
-				<span id="error">{{.Info}}</span> <!-- used to print errors -->
-			{{end}}
+		{{if .Success}}
+		<div class="success">
+			<div class="text-1">Thank you for using TFT!</div>
+			<button class="btn"><a href="{{.Info}}">Download File</a></button>
 		</div>
+		{{else}}
+			<span id="error">{{.Info}}</span> <!-- used to print errors -->
+		{{end}}
+		<div class="push"></div>
 	</div>
 </div>
 

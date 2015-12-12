@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 html,
 button,
@@ -25,19 +26,21 @@ header {
   color: #FFFFFF;
   background-color:#FF9900;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   height: 250px;
 }
 header h1 {
   margin-top: 50px;
-  letter-spacing: 0.3em;
-  font: 4.4375em Montserrat;
+  letter-spacing: 0.5em;
+  font: 5.4375em Montserrat;
   font-weight:700;
-
+}
+header h1 span {
+  letter-spacing: -0.1em;
 }
 header h4 {
   padding-top: 10px;
-  word-spacing: 0.5em;
+  word-spacing: 3em;
 }
 footer {
   width: 100%;
@@ -45,6 +48,9 @@ footer {
   padding: 15px 0;
   font: 1em Oxygen;
   color: #1F2740;
+}
+img {
+  border: 0;
 }
 .cf:before,
 .cf:after {
@@ -59,22 +65,118 @@ footer {
   text-align: center;
 }
 .main .text-2 {
+  margin-top: 15px;
   padding: 15px 0;
   font: 1.3em Oxygen;
   color: #1F2740;
 }
+
 .main form {
-  margin-top: 100px;
+  margin-top: 25px;
+  margin-bottom: 25px;
   color: #fff;
   font-size: 1.25em;
 }
 .content {
   padding: 15px 0;
   border-bottom: 1px solid #c5c5c5;
+  text-align: center;
 }
 .blue {
   background-color:#84A4BF;
   min-height: 300px;
+}
+.push {
+  min-height: 200px;
+}
+.success {
+  font-size: 1.25em;
+  color: #fff;
+}
+.text-1 {
+  font: 1.5em Oxygen;
+  color: #1F2740;
+}
+.text-3 {
+  padding: 15px 0;
+  font: 1.4em Oxygen;
+  color: #FFF;
+}
+.text-4 {
+  font: 1em Oxygen;
+}
+.info {
+  max-width: 50%;
+  margin: 20px 30%;
+}
+@media screen and (max-width: 600px) {
+  .info {
+    width: 100%;
+  }
+}
+.input-group {
+  display: table;
+  width: 50%;
+  margin: 0 25%;
+}
+@media screen and (max-width: 600px) {
+  .info {
+    width: 100%;
+  }
+}
+.input-group input {
+  display: table-cell;
+  position: relative;
+  width: 100%;
+}
+.input-group-button {
+  width: 1%;
+  vertical-align: middle;
+  display: table-cell;
+}
+.input-group-button .btn {
+  margin-left: -1px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn {
+  position: relative;
+  display: inline-block;
+  padding: 6px 12px;
+  line-height: 20px;
+  color: #333;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #eee;
+  background-image: linear-gradient(#fcfcfc, #eee);
+  border: 1px solid #d5d5d5;
+  border-radius: 3px;
+  -webkit-user-select: none;
+  -webkit-appearance: none;
+}
+.btn a {
+  color: #333;
+  text-decoration: none;
+}
+button {
+  overflow: visible;
+  margin: 0;
+}
+input[type="text"] {
+  min-height: 34px;
+  padding: 7px 8px;
+  font-size: 13px;
+  vertical-align: middle;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+}
+.clippy {
+  margin-top: -3px;
+  position: relative;
+  top: 3px;
 }
 #wrapper {
   min-width: 100%;
@@ -85,11 +187,20 @@ footer {
   color: #ff0000;
 }
 #pick {
-  border-radius: 0 .5em 0.5em 0;
-  width: 23%;
-  height: 2.375em;
+  background-color: #fff;
+  min-height: 34px;
+  padding: 7px 8px;
+  font-size: 13px;
+  vertical-align: middle;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
 }
-#upload {}
+#upload {
+  position: relative;
+  margin-left: -7px;
+}
 .container {
   width: 90%;
   max-width: 900px;

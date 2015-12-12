@@ -35,6 +35,10 @@ header h1 {
   font: 5.4375em Montserrat;
   font-weight:700;
 }
+header h1 a {
+  color: #FFFFFF;
+  text-decoration: none;
+}
 header h1 span {
   letter-spacing: -0.1em;
 }
@@ -87,11 +91,15 @@ img {
   min-height: 300px;
 }
 .push {
-  min-height: 200px;
+  min-height: 100px;
 }
 .success {
   font-size: 1.25em;
   color: #fff;
+}
+.success:first-child div {
+  padding-top: 20%;
+  padding-bottom: 20px;
 }
 .text-1 {
   font: 1.5em Oxygen;

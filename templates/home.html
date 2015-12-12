@@ -3,12 +3,12 @@
 <div class="main">
 	<div class="content">
 		<div class="container">
-			<div class="text-2">Use TFT to instantly share files with your friends. <br>It only takes TWO steps!</div>
+			<div class="text-2">Use TFT to instantly share files with your friends.</div>
 		</div>
 	</div>
 	<div class="blue">
 		<div class="container">
-			<div class="info text-3">1. Begin by uploading a file:</div>
+			<div class="info text-3"><span>1.</span> Begin by uploading a file:</div>
 			<form enctype="multipart/form-data" action="http://127.0.0.1:3000/" method="post">
 		      	<input id="pick" type="file" name="uploadfile" />
 		      	<input class="btn" id="upload" type="submit" value="Upload" />
@@ -17,9 +17,9 @@
 	      	<!-- RESULTS - POST UPLOAD -->
 			{{if .Success}}
 				<div class="success">
-					<div class="info text-4">2. Your upload was successful! We have created a page for your download. <br><br> Go to the download page:</div>
+					<div class="info text-4"><span>2.</span> Your upload was successful! We have created a page for your download. <br><br> <span>a.</span> Go to the download page:</div>
 					<button class="btn"><a href="{{.Info}}">Go to Download Page</a></button>
-					<div class="info text-4">OR <br> copy the URL to your clipboard and send to a friend:</div>
+					<div class="info text-4">OR <br> <span>b.</span> Copy the URL to your clipboard and send to a friend:</div>
 					<div class="input-group">
 						<!-- Target -->
 						<input type="text" id="link" value="{{.Info}}"/>

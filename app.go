@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var hostname = "http://localhost:3000"
+var hostname = "http://andreavelosa.com:3000"
 
 func init() {
 	// Seed random

@@ -8,7 +8,11 @@
 			<button class="btn"><a href="{{.Info}}">Download File</a></button>			
 		</div>
 		{{else}}
+		<div class="error">
 			<span id="error">{{.Info}}</span> <!-- used to print errors -->
+			<div class="push"></div>
+			<div class="push"></div>
+		</div>
 		{{end}}
 		<div class="push"></div>
 	</div>

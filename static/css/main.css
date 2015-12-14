@@ -93,6 +93,9 @@ img {
 .push {
   min-height: 100px;
 }
+.error {
+  padding-top: 20%;
+}
 .success {
   font-size: 1.25em;
   color: #fff;
